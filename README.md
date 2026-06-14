@@ -74,44 +74,37 @@ All tables are protected with **Row Level Security (RLS)** policies.
 ---
 
 ## 📁 Project Structure
+
 src/
-
 ├── app/
-
 │   ├── page.tsx              ← Home page (menu + search + filter)
-
-│   ├── login/page.tsx        ← Google OAuth login
-
-│   ├── cart/page.tsx         ← Cart + place order
-
-│   ├── orders/page.tsx       ← Order history
-
-│   ├── admin/page.tsx        ← Admin panel
-
-│   └── auth/callback/        ← OAuth callback handler
-
+│   ├── login/
+│   │   └── page.tsx          ← Google OAuth login
+│   ├── cart/
+│   │   └── page.tsx          ← Cart + place order
+│   ├── orders/
+│   │   └── page.tsx          ← Order history
+│   ├── admin/
+│   │   └── page.tsx          ← Admin panel
+│   └── auth/
+│       └── callback/
+│           └── route.ts      ← OAuth callback handler
 ├── components/
-
 │   ├── Header.tsx
-
 │   ├── Footer.tsx
-
 │   ├── ProductCard.tsx
-
 │   ├── CartDrawer.tsx
-
-│   ├── AdminProducts.tsx     ← CRUD + image upload
-
-│   └── AdminOrders.tsx       ← Order management
-
+│   ├── AdminProducts.tsx
+│   └── AdminOrders.tsx
 ├── lib/
-
-│   ├── supabase/             ← client, server, middleware
-
-│   └── store/cartStore.ts    ← Zustand cart
-
-└── types/index.ts            ← Global TypeScript types
-
+│   ├── supabase/
+│   │   ├── client.ts
+│   │   ├── server.ts
+│   │   └── middleware.ts
+│   └── store/
+│       └── cartStore.ts
+└── types/
+    └── index.ts
 ---
 
 ## ⚙️ Getting Started
