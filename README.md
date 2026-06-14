@@ -161,20 +161,10 @@ Open [http://localhost:3000](http://localhost:3000) 🚀
 
 ---
 
-## 🔮 Future Improvements
-
-- 💳 Stripe payment integration
-- 📍 Delivery address & location tracking
-- 🔔 Real-time order status notifications
-- ⭐ Product ratings & reviews
-- 📊 Admin analytics dashboard
-- 📱 PWA support for mobile
-
----
 
 ## 👨‍💻 Author
 
-**Developed by:** [Your Name](https://github.com/HamiParsa)
+**Developed by:** [HamiParsa](https://github.com/HamiParsa)
 💬 Full-Stack Developer | Building real-world projects with modern web technologies
 
 ---
