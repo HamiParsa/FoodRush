@@ -74,7 +74,7 @@ All tables are protected with **Row Level Security (RLS)** policies.
 ---
 
 ## 📁 Project Structure
-
+```
 src/
 ├── app/
 │   ├── page.tsx              ← Home page (menu + search + filter)
@@ -105,6 +105,8 @@ src/
 │       └── cartStore.ts
 └── types/
     └── index.ts
+</code>
+```
 ---
 
 ## ⚙️ Getting Started
