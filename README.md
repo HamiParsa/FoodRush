@@ -70,6 +70,28 @@ orders          → customer orders with status tracking
 order_items     → individual items within each order
 
 All tables are protected with **Row Level Security (RLS)** policies.
+---
+
+## 🖼️ Project Preview
+
+<div align="center">
+  <img src="image1.png" width="700px" />
+  <br/><br/>
+  <img src="image2.png" width="700px" />
+  <br/><br/>
+  <img src="image3.png" width="700px" />
+  <br/><br/>
+  <img src="image4.png" width="700px" />
+  <br/><br/>
+  <img src="image5.png" width="700px" />
+  <br/><br/>
+  <img src="image6.png" width="700px" />
+  <br/><br/>
+  <img src="image7.png" width="700px" />
+  <br/><br/>
+  <img src="image8.png" width="700px" />
+</div>
+
 
 ---
 
