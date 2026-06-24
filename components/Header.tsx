@@ -14,35 +14,112 @@ const supabase = createClient()
 export default function Header() {
   const { getTotalItems } = useCartStore()
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [avatarError, setAvatarError] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
+    let isMounted = true
+
     const getProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data } = await supabase
+      try {
+        setLoading(true)
+        
+        const { data: { user }, error: userError } = await supabase.auth.getUser()
+        
+        if (userError || !user) {
+          if (isMounted) {
+            setProfile(null)
+            setLoading(false)
+          }
+          return
+        }
+
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single()
-        setProfile(data)
+
+        if (error) {
+          console.error('Error fetching profile:', error)
+          if (isMounted) setProfile(null)
+        } else {
+          if (isMounted) {
+            setProfile(data)
+            setAvatarError(false)
+          }
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error)
+        if (isMounted) setProfile(null)
+      } finally {
+        if (isMounted) setLoading(false)
       }
     }
+
     getProfile()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return
+      
+      if (event === 'SIGNED_IN' && session?.user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+        if (isMounted) {
+          setProfile(data)
+          setAvatarError(false)
+        }
+      } else if (event === 'SIGNED_OUT') {
+        if (isMounted) {
+          setProfile(null)
+          setAvatarError(false)
+        }
+      }
+    })
+
+    return () => {
+      isMounted = false
+      authListener?.subscription.unsubscribe()
+    }
   }, [])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    setProfile(null)
-    router.push('/')
-    router.refresh()
+    try {
+      await supabase.auth.signOut()
+      setProfile(null)
+      router.push('/')
+      router.refresh()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
+  if (loading) {
+    return (
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-200 rounded-2xl animate-pulse"></div>
+            <div className="flex flex-col">
+              <div className="w-24 h-5 bg-gray-200 rounded animate-pulse"></div>
+              <div className="w-16 h-3 bg-gray-200 rounded mt-1 animate-pulse"></div>
+            </div>
+          </div>
+          <div className="w-32 h-10 bg-gray-200 rounded-xl animate-pulse"></div>
+        </div>
+      </header>
+    )
   }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-black/5">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
 
-        {/* Logo - Fresh & Bold */}
+        {/* Logo Section */}
         <Link href="/" className="group flex items-center gap-3">
           <div className="relative w-10 h-10 bg-black rounded-2xl flex items-center justify-center text-white overflow-hidden transition-all duration-500 group-hover:rounded-3xl">
             <Pizza className="w-5 h-5 relative z-10" strokeWidth={1.5} />
@@ -58,10 +135,10 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Navigation - Minimal bold right section */}
+        {/* Navigation Section */}
         <div className="flex items-center gap-4">
 
-          {/* Cart Button - Redesigned from scratch */}
+          {/* Cart Button */}
           <Link
             href="/cart"
             className="group relative flex items-center gap-2.5 px-4 py-2 rounded-xl bg-black/5 hover:bg-black text-black/70 hover:text-white transition-all duration-300"
@@ -75,10 +152,11 @@ export default function Header() {
             )}
           </Link>
 
+          {/* User Section - Logged In */}
           {profile ? (
             <div className="flex items-center gap-3 pl-3 border-l border-black/10">
               
-              {/* Orders Button */}
+              {/* Orders Link */}
               <Link
                 href="/orders"
                 className="group flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-black/5 transition-all duration-200"
@@ -89,8 +167,8 @@ export default function Header() {
                 </span>
               </Link>
 
-              {/* Admin Button - Conditional */}
-              {profile.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+              {/* Admin Link - Conditional */}
+              {profile?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
                 <Link
                   href="/admin"
                   className="group flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-black/5 transition-all duration-200"
@@ -102,17 +180,20 @@ export default function Header() {
                 </Link>
               )}
 
-              {/* User Avatar + Logout - Clean design */}
+              {/* User Avatar & Logout */}
               <div className="flex items-center gap-2 pl-2">
-                <div className="group/avatar relative">
-                  {profile.avatar_url ? (
+                <div className="group/avatar relative flex items-center gap-2">
+                  {profile?.avatar_url && !avatarError ? (
                     <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-black/10 transition-all duration-300 group-hover/avatar:border-black/30">
                       <Image
-                        width={1000}
-                        height={1000}
+                        width={36}
+                        height={36}
                         src={profile.avatar_url}
-                        alt={profile.full_name}
+                        alt={profile.full_name || 'User avatar'}
                         className="w-full h-full object-cover"
+                        priority
+                        onError={() => setAvatarError(true)}
+                        unoptimized={profile.avatar_url.startsWith('data:')}
                       />
                     </div>
                   ) : (
@@ -120,6 +201,9 @@ export default function Header() {
                       <User className="w-4 h-4 text-black/60" strokeWidth={1.5} />
                     </div>
                   )}
+                  <span className="text-sm font-medium text-black/70 hidden sm:inline">
+                    {profile?.full_name?.split(' ')[0] || 'User'}
+                  </span>
                 </div>
 
                 <button
@@ -133,6 +217,7 @@ export default function Header() {
 
             </div>
           ) : (
+            /* Sign In Button - Logged Out */
             <Link
               href="/login"
               className="group flex items-center gap-2 px-5 py-2.5 bg-black rounded-xl text-white text-sm font-medium transition-all duration-300 hover:bg-black/90 hover:scale-105 active:scale-95 shadow-sm"
