@@ -1,3 +1,4 @@
+....
 <div align="center">
   <img src="https://img.shields.io/badge/FoodRush-C1121F?style=for-the-badge&logoColor=white"/>
   <h1>🍽️ FoodRush</h1>
