@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://img.shields.io/badge/FoodRush-C1121F?style=for-the-badge&logoColor=white"/>
-  <h1>🍽️ FoodRush</h1>
+  <h1> 🍔 FoodRush</h1>
   <p><b>Order food. Enjoy life.</b> — A full-stack food ordering platform built from scratch.</p>
 
   <img src="https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"/>
